@@ -14,6 +14,10 @@ int releaseAdvancedResources();
 int reluHost(const float* x, float* y, int n);
 int softmaxHost(const float* x, float* y, int rows, int cols);
 int softmaxHostAdvanced(const float* x, float* y, int rows, int cols);
+int gemmHost(const float* a, const float* b, float* c, int m, int n, int k);
+int gemmHostAdvanced(const float* a, const float* b, float* c, int m, int n, int k);
+int gemmHostCublas(const float* a, const float* b, float* c, int m, int n, int k);
+int releaseGemmResources();
 
 #ifdef __cplusplus
 }

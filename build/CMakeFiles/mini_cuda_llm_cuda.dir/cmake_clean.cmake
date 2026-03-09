@@ -2,6 +2,8 @@ file(REMOVE_RECURSE
   "CMakeFiles/mini_cuda_llm_cuda.dir/cmake_device_link.o"
   "CMakeFiles/mini_cuda_llm_cuda.dir/src/dl_ops.cu.o"
   "CMakeFiles/mini_cuda_llm_cuda.dir/src/dl_ops.cu.o.d"
+  "CMakeFiles/mini_cuda_llm_cuda.dir/src/gemm.cu.o"
+  "CMakeFiles/mini_cuda_llm_cuda.dir/src/gemm.cu.o.d"
   "CMakeFiles/mini_cuda_llm_cuda.dir/src/vector_add.cu.o"
   "CMakeFiles/mini_cuda_llm_cuda.dir/src/vector_add.cu.o.d"
   "CMakeFiles/mini_cuda_llm_cuda.dir/src/vector_add_advanced.cu.o"

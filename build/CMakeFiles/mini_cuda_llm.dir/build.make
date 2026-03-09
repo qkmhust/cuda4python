@@ -94,6 +94,7 @@ mini_cuda_llm: CMakeFiles/mini_cuda_llm.dir/src/main.cpp.o
 mini_cuda_llm: CMakeFiles/mini_cuda_llm.dir/build.make
 mini_cuda_llm: libmini_cuda_llm_cuda.so
 mini_cuda_llm: /usr/local/cuda/lib64/libcudart.so
+mini_cuda_llm: /usr/local/cuda/lib64/libcublas.so
 mini_cuda_llm: CMakeFiles/mini_cuda_llm.dir/link.txt
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/root/mini-cuda-llm/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Linking CXX executable mini_cuda_llm"
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/mini_cuda_llm.dir/link.txt --verbose=$(VERBOSE)

@@ -10,11 +10,12 @@ add_library(mini_cuda_llm_cuda SHARED
     src/vector_add.cu
     src/vector_add_advanced.cu
     src/dl_ops.cu
+    src/gemm.cu
 )
 
 target_include_directories(mini_cuda_llm_cuda PUBLIC include)
 
-target_link_libraries(mini_cuda_llm_cuda PUBLIC CUDA::cudart)
+target_link_libraries(mini_cuda_llm_cuda PUBLIC CUDA::cudart CUDA::cublas)
 
 set_target_properties(mini_cuda_llm_cuda PROPERTIES
     OUTPUT_NAME mini_cuda_llm_cuda

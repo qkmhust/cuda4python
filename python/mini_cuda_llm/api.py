@@ -63,12 +63,46 @@ class _CudaLib:
         ]
         self.lib.softmaxHostAdvanced.restype = ctypes.c_int
 
+        self.lib.gemmHost.argtypes = [
+            ctypes.POINTER(ctypes.c_float),
+            ctypes.POINTER(ctypes.c_float),
+            ctypes.POINTER(ctypes.c_float),
+            ctypes.c_int,
+            ctypes.c_int,
+            ctypes.c_int,
+        ]
+        self.lib.gemmHost.restype = ctypes.c_int
+
+        self.lib.gemmHostAdvanced.argtypes = [
+            ctypes.POINTER(ctypes.c_float),
+            ctypes.POINTER(ctypes.c_float),
+            ctypes.POINTER(ctypes.c_float),
+            ctypes.c_int,
+            ctypes.c_int,
+            ctypes.c_int,
+        ]
+        self.lib.gemmHostAdvanced.restype = ctypes.c_int
+
+        self.lib.gemmHostCublas.argtypes = [
+            ctypes.POINTER(ctypes.c_float),
+            ctypes.POINTER(ctypes.c_float),
+            ctypes.POINTER(ctypes.c_float),
+            ctypes.c_int,
+            ctypes.c_int,
+            ctypes.c_int,
+        ]
+        self.lib.gemmHostCublas.restype = ctypes.c_int
+
+        self.lib.releaseGemmResources.argtypes = []
+        self.lib.releaseGemmResources.restype = ctypes.c_int
+
 
 _cuda = _CudaLib()
 
 
 def _cleanup() -> None:
     _cuda.lib.releaseAdvancedResources()
+    _cuda.lib.releaseGemmResources()
 
 
 atexit.register(_cleanup)
@@ -214,3 +248,87 @@ def cuda_softmax_numpy_advanced(x: np.ndarray) -> np.ndarray:
     if code != 0:
         raise RuntimeError(f"softmaxHostAdvanced failed, cuda code={code}")
     return y_arr
+
+
+def cuda_gemm_numpy(a: np.ndarray, b: np.ndarray) -> np.ndarray:
+    if a.ndim != 2 or b.ndim != 2:
+        raise ValueError("GEMM inputs must be 2D arrays")
+    if a.shape[1] != b.shape[0]:
+        raise ValueError("GEMM shape mismatch: a.shape[1] must equal b.shape[0]")
+
+    m, k = a.shape
+    _, n = b.shape
+    if m == 0 or n == 0 or k == 0:
+        return np.empty((m, n), dtype=np.float32)
+
+    a_arr = np.ascontiguousarray(a, dtype=np.float32)
+    b_arr = np.ascontiguousarray(b, dtype=np.float32)
+    c_arr = np.empty((m, n), dtype=np.float32)
+
+    code = _cuda.lib.gemmHost(
+        a_arr.ctypes.data_as(ctypes.POINTER(ctypes.c_float)),
+        b_arr.ctypes.data_as(ctypes.POINTER(ctypes.c_float)),
+        c_arr.ctypes.data_as(ctypes.POINTER(ctypes.c_float)),
+        int(m),
+        int(n),
+        int(k),
+    )
+    if code != 0:
+        raise RuntimeError(f"gemmHost failed, cuda code={code}")
+    return c_arr
+
+
+def cuda_gemm_numpy_advanced(a: np.ndarray, b: np.ndarray) -> np.ndarray:
+    if a.ndim != 2 or b.ndim != 2:
+        raise ValueError("GEMM inputs must be 2D arrays")
+    if a.shape[1] != b.shape[0]:
+        raise ValueError("GEMM shape mismatch: a.shape[1] must equal b.shape[0]")
+
+    m, k = a.shape
+    _, n = b.shape
+    if m == 0 or n == 0 or k == 0:
+        return np.empty((m, n), dtype=np.float32)
+
+    a_arr = np.ascontiguousarray(a, dtype=np.float32)
+    b_arr = np.ascontiguousarray(b, dtype=np.float32)
+    c_arr = np.empty((m, n), dtype=np.float32)
+
+    code = _cuda.lib.gemmHostAdvanced(
+        a_arr.ctypes.data_as(ctypes.POINTER(ctypes.c_float)),
+        b_arr.ctypes.data_as(ctypes.POINTER(ctypes.c_float)),
+        c_arr.ctypes.data_as(ctypes.POINTER(ctypes.c_float)),
+        int(m),
+        int(n),
+        int(k),
+    )
+    if code != 0:
+        raise RuntimeError(f"gemmHostAdvanced failed, cuda code={code}")
+    return c_arr
+
+
+def cuda_gemm_numpy_cublas(a: np.ndarray, b: np.ndarray) -> np.ndarray:
+    if a.ndim != 2 or b.ndim != 2:
+        raise ValueError("GEMM inputs must be 2D arrays")
+    if a.shape[1] != b.shape[0]:
+        raise ValueError("GEMM shape mismatch: a.shape[1] must equal b.shape[0]")
+
+    m, k = a.shape
+    _, n = b.shape
+    if m == 0 or n == 0 or k == 0:
+        return np.empty((m, n), dtype=np.float32)
+
+    a_arr = np.ascontiguousarray(a, dtype=np.float32)
+    b_arr = np.ascontiguousarray(b, dtype=np.float32)
+    c_arr = np.empty((m, n), dtype=np.float32)
+
+    code = _cuda.lib.gemmHostCublas(
+        a_arr.ctypes.data_as(ctypes.POINTER(ctypes.c_float)),
+        b_arr.ctypes.data_as(ctypes.POINTER(ctypes.c_float)),
+        c_arr.ctypes.data_as(ctypes.POINTER(ctypes.c_float)),
+        int(m),
+        int(n),
+        int(k),
+    )
+    if code != 0:
+        raise RuntimeError(f"gemmHostCublas failed, cuda code={code}")
+    return c_arr

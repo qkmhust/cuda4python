@@ -1,1 +1,1 @@
-/usr/bin/c++ CMakeFiles/mini_cuda_llm.dir/src/main.cpp.o -o mini_cuda_llm  -Wl,-rpath,/root/mini-cuda-llm/build:/usr/local/cuda/lib64 libmini_cuda_llm_cuda.so /usr/local/cuda/lib64/libcudart.so 
+/usr/bin/c++ CMakeFiles/mini_cuda_llm.dir/src/main.cpp.o -o mini_cuda_llm  -Wl,-rpath,/root/mini-cuda-llm/build:/usr/local/cuda/lib64 libmini_cuda_llm_cuda.so /usr/local/cuda/lib64/libcudart.so /usr/local/cuda/lib64/libcublas.so 

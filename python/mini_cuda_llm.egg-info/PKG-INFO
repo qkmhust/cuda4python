@@ -3,3 +3,4 @@ Name: mini-cuda-llm
 Version: 0.1.0
 Summary: Python wrapper for mini CUDA vector add
 Requires-Dist: numpy
+Requires-Dist: matplotlib

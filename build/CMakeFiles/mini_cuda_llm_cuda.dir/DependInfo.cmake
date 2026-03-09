@@ -9,6 +9,7 @@ set(CMAKE_DEPENDS_LANGUAGES
 # The set of dependency files which are needed:
 set(CMAKE_DEPENDS_DEPENDENCY_FILES
   "/root/mini-cuda-llm/src/dl_ops.cu" "CMakeFiles/mini_cuda_llm_cuda.dir/src/dl_ops.cu.o" "gcc" "CMakeFiles/mini_cuda_llm_cuda.dir/src/dl_ops.cu.o.d"
+  "/root/mini-cuda-llm/src/gemm.cu" "CMakeFiles/mini_cuda_llm_cuda.dir/src/gemm.cu.o" "gcc" "CMakeFiles/mini_cuda_llm_cuda.dir/src/gemm.cu.o.d"
   "/root/mini-cuda-llm/src/vector_add.cu" "CMakeFiles/mini_cuda_llm_cuda.dir/src/vector_add.cu.o" "gcc" "CMakeFiles/mini_cuda_llm_cuda.dir/src/vector_add.cu.o.d"
   "/root/mini-cuda-llm/src/vector_add_advanced.cu" "CMakeFiles/mini_cuda_llm_cuda.dir/src/vector_add_advanced.cu.o" "gcc" "CMakeFiles/mini_cuda_llm_cuda.dir/src/vector_add_advanced.cu.o.d"
   )

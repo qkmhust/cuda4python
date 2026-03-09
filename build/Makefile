@@ -211,6 +211,30 @@ src/dl_ops.cu.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/mini_cuda_llm_cuda.dir/build.make CMakeFiles/mini_cuda_llm_cuda.dir/src/dl_ops.cu.s
 .PHONY : src/dl_ops.cu.s
 
+src/gemm.o: src/gemm.cu.o
+.PHONY : src/gemm.o
+
+# target to build an object file
+src/gemm.cu.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/mini_cuda_llm_cuda.dir/build.make CMakeFiles/mini_cuda_llm_cuda.dir/src/gemm.cu.o
+.PHONY : src/gemm.cu.o
+
+src/gemm.i: src/gemm.cu.i
+.PHONY : src/gemm.i
+
+# target to preprocess a source file
+src/gemm.cu.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/mini_cuda_llm_cuda.dir/build.make CMakeFiles/mini_cuda_llm_cuda.dir/src/gemm.cu.i
+.PHONY : src/gemm.cu.i
+
+src/gemm.s: src/gemm.cu.s
+.PHONY : src/gemm.s
+
+# target to generate assembly for a file
+src/gemm.cu.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/mini_cuda_llm_cuda.dir/build.make CMakeFiles/mini_cuda_llm_cuda.dir/src/gemm.cu.s
+.PHONY : src/gemm.cu.s
+
 src/main.o: src/main.cpp.o
 .PHONY : src/main.o
 
@@ -300,6 +324,9 @@ help:
 	@echo "... src/dl_ops.o"
 	@echo "... src/dl_ops.i"
 	@echo "... src/dl_ops.s"
+	@echo "... src/gemm.o"
+	@echo "... src/gemm.i"
+	@echo "... src/gemm.s"
 	@echo "... src/main.o"
 	@echo "... src/main.i"
 	@echo "... src/main.s"

@@ -1,6 +1,9 @@
 import numpy as np
 
 from .api import (
+    cuda_gemm_numpy,
+    cuda_gemm_numpy_advanced,
+    cuda_gemm_numpy_cublas,
     cuda_relu_numpy,
     cuda_softmax_numpy,
     cuda_softmax_numpy_advanced,
@@ -32,6 +35,16 @@ def run_validation() -> None:
     softmax_adv = cuda_softmax_numpy_advanced(softmax_in)
     print("softmax basic row sums:", np.sum(softmax_basic, axis=1).tolist())
     print("softmax advanced row sums:", np.sum(softmax_adv, axis=1).tolist())
+
+    a = np.array([[1.0, 2.0], [3.0, 4.0]], dtype=np.float32)
+    b = np.array([[5.0, 6.0], [7.0, 8.0]], dtype=np.float32)
+    gemm_basic = cuda_gemm_numpy(a, b)
+    gemm_adv = cuda_gemm_numpy_advanced(a, b)
+    gemm_cublas = cuda_gemm_numpy_cublas(a, b)
+    gemm_np = a @ b
+    print("gemm basic max diff:", float(np.max(np.abs(gemm_basic - gemm_np))))
+    print("gemm advanced max diff:", float(np.max(np.abs(gemm_adv - gemm_np))))
+    print("gemm cublas max diff:", float(np.max(np.abs(gemm_cublas - gemm_np))))
 
 
 if __name__ == "__main__":
