@@ -235,6 +235,30 @@ src/vector_add.cu.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/mini_cuda_llm_cuda.dir/build.make CMakeFiles/mini_cuda_llm_cuda.dir/src/vector_add.cu.s
 .PHONY : src/vector_add.cu.s
 
+src/vector_add_advanced.o: src/vector_add_advanced.cu.o
+.PHONY : src/vector_add_advanced.o
+
+# target to build an object file
+src/vector_add_advanced.cu.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/mini_cuda_llm_cuda.dir/build.make CMakeFiles/mini_cuda_llm_cuda.dir/src/vector_add_advanced.cu.o
+.PHONY : src/vector_add_advanced.cu.o
+
+src/vector_add_advanced.i: src/vector_add_advanced.cu.i
+.PHONY : src/vector_add_advanced.i
+
+# target to preprocess a source file
+src/vector_add_advanced.cu.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/mini_cuda_llm_cuda.dir/build.make CMakeFiles/mini_cuda_llm_cuda.dir/src/vector_add_advanced.cu.i
+.PHONY : src/vector_add_advanced.cu.i
+
+src/vector_add_advanced.s: src/vector_add_advanced.cu.s
+.PHONY : src/vector_add_advanced.s
+
+# target to generate assembly for a file
+src/vector_add_advanced.cu.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/mini_cuda_llm_cuda.dir/build.make CMakeFiles/mini_cuda_llm_cuda.dir/src/vector_add_advanced.cu.s
+.PHONY : src/vector_add_advanced.cu.s
+
 # Help Target
 help:
 	@echo "The following are some of the valid targets for this Makefile:"
@@ -255,6 +279,9 @@ help:
 	@echo "... src/vector_add.o"
 	@echo "... src/vector_add.i"
 	@echo "... src/vector_add.s"
+	@echo "... src/vector_add_advanced.o"
+	@echo "... src/vector_add_advanced.i"
+	@echo "... src/vector_add_advanced.s"
 .PHONY : help
 
 

@@ -3,7 +3,7 @@ import time
 
 import numpy as np
 
-from .api import cuda_vector_add_numpy
+from .api import cuda_vector_add_numpy, cuda_vector_add_numpy_advanced
 
 
 def _timeit(fn, rounds: int) -> float:
@@ -20,20 +20,27 @@ def run_benchmark(size: int, rounds: int, warmup: int) -> None:
 
     for _ in range(warmup):
         cuda_vector_add_numpy(a, b)
+        cuda_vector_add_numpy_advanced(a, b)
         _ = a + b
 
-    cuda_time = _timeit(lambda: cuda_vector_add_numpy(a, b), rounds)
+    cuda_basic_time = _timeit(lambda: cuda_vector_add_numpy(a, b), rounds)
+    cuda_advanced_time = _timeit(lambda: cuda_vector_add_numpy_advanced(a, b), rounds)
     numpy_time = _timeit(lambda: a + b, rounds)
 
-    cuda_out = cuda_vector_add_numpy(a, b)
+    cuda_basic_out = cuda_vector_add_numpy(a, b)
+    cuda_advanced_out = cuda_vector_add_numpy_advanced(a, b)
     np_out = a + b
-    max_abs_diff = float(np.max(np.abs(cuda_out - np_out)))
+    max_abs_diff_basic = float(np.max(np.abs(cuda_basic_out - np_out)))
+    max_abs_diff_advanced = float(np.max(np.abs(cuda_advanced_out - np_out)))
 
     print(f"size={size}, rounds={rounds}, warmup={warmup}")
-    print(f"CUDA avg time:  {cuda_time * 1e3:.3f} ms")
+    print(f"CUDA basic avg time:    {cuda_basic_time * 1e3:.3f} ms")
+    print(f"CUDA advanced avg time: {cuda_advanced_time * 1e3:.3f} ms")
     print(f"NumPy avg time: {numpy_time * 1e3:.3f} ms")
-    print(f"speedup (NumPy/CUDA): {numpy_time / cuda_time:.3f}x")
-    print(f"max abs diff: {max_abs_diff:.8f}")
+    print(f"speedup (basic/advanced): {cuda_basic_time / cuda_advanced_time:.3f}x")
+    print(f"speedup (NumPy/advanced): {numpy_time / cuda_advanced_time:.3f}x")
+    print(f"max abs diff basic: {max_abs_diff_basic:.8f}")
+    print(f"max abs diff advanced: {max_abs_diff_advanced:.8f}")
 
 
 if __name__ == "__main__":

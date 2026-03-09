@@ -29,15 +29,23 @@ class _CudaLib:
         self.lib.validateVectorAdd.argtypes = [ctypes.c_int, ctypes.c_float, ctypes.c_float]
         self.lib.validateVectorAdd.restype = ctypes.c_int
 
-        self.lib.releaseVectorAddResources.argtypes = []
-        self.lib.releaseVectorAddResources.restype = ctypes.c_int
+        self.lib.vectorAddHostAdvanced.argtypes = [
+            ctypes.POINTER(ctypes.c_float),
+            ctypes.POINTER(ctypes.c_float),
+            ctypes.POINTER(ctypes.c_float),
+            ctypes.c_int,
+        ]
+        self.lib.vectorAddHostAdvanced.restype = ctypes.c_int
+
+        self.lib.releaseAdvancedResources.argtypes = []
+        self.lib.releaseAdvancedResources.restype = ctypes.c_int
 
 
 _cuda = _CudaLib()
 
 
 def _cleanup() -> None:
-    _cuda.lib.releaseVectorAddResources()
+    _cuda.lib.releaseAdvancedResources()
 
 
 atexit.register(_cleanup)
@@ -94,5 +102,30 @@ def cuda_vector_add_numpy(a: np.ndarray, b: np.ndarray) -> np.ndarray:
     )
     if code != 0:
         raise RuntimeError(f"vectorAddHost failed, cuda code={code}")
+
+    return c_arr
+
+
+def cuda_vector_add_numpy_advanced(a: np.ndarray, b: np.ndarray) -> np.ndarray:
+    if a.shape != b.shape:
+        raise ValueError("Input arrays must have the same shape")
+    if a.ndim != 1:
+        raise ValueError("Only 1D arrays are supported")
+    if a.size == 0:
+        return np.array([], dtype=np.float32)
+
+    a_arr = np.ascontiguousarray(a, dtype=np.float32)
+    b_arr = np.ascontiguousarray(b, dtype=np.float32)
+    c_arr = np.empty_like(a_arr)
+
+    n = int(a_arr.size)
+    code = _cuda.lib.vectorAddHostAdvanced(
+        a_arr.ctypes.data_as(ctypes.POINTER(ctypes.c_float)),
+        b_arr.ctypes.data_as(ctypes.POINTER(ctypes.c_float)),
+        c_arr.ctypes.data_as(ctypes.POINTER(ctypes.c_float)),
+        n,
+    )
+    if code != 0:
+        raise RuntimeError(f"vectorAddHostAdvanced failed, cuda code={code}")
 
     return c_arr
