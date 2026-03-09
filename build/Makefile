@@ -187,6 +187,30 @@ mini_cuda_llm/fast:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/mini_cuda_llm.dir/build.make CMakeFiles/mini_cuda_llm.dir/build
 .PHONY : mini_cuda_llm/fast
 
+src/dl_ops.o: src/dl_ops.cu.o
+.PHONY : src/dl_ops.o
+
+# target to build an object file
+src/dl_ops.cu.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/mini_cuda_llm_cuda.dir/build.make CMakeFiles/mini_cuda_llm_cuda.dir/src/dl_ops.cu.o
+.PHONY : src/dl_ops.cu.o
+
+src/dl_ops.i: src/dl_ops.cu.i
+.PHONY : src/dl_ops.i
+
+# target to preprocess a source file
+src/dl_ops.cu.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/mini_cuda_llm_cuda.dir/build.make CMakeFiles/mini_cuda_llm_cuda.dir/src/dl_ops.cu.i
+.PHONY : src/dl_ops.cu.i
+
+src/dl_ops.s: src/dl_ops.cu.s
+.PHONY : src/dl_ops.s
+
+# target to generate assembly for a file
+src/dl_ops.cu.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/mini_cuda_llm_cuda.dir/build.make CMakeFiles/mini_cuda_llm_cuda.dir/src/dl_ops.cu.s
+.PHONY : src/dl_ops.cu.s
+
 src/main.o: src/main.cpp.o
 .PHONY : src/main.o
 
@@ -273,6 +297,9 @@ help:
 	@echo "... rebuild_cache"
 	@echo "... mini_cuda_llm"
 	@echo "... mini_cuda_llm_cuda"
+	@echo "... src/dl_ops.o"
+	@echo "... src/dl_ops.i"
+	@echo "... src/dl_ops.s"
 	@echo "... src/main.o"
 	@echo "... src/main.i"
 	@echo "... src/main.s"

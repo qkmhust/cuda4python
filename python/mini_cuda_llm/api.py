@@ -40,6 +40,29 @@ class _CudaLib:
         self.lib.releaseAdvancedResources.argtypes = []
         self.lib.releaseAdvancedResources.restype = ctypes.c_int
 
+        self.lib.reluHost.argtypes = [
+            ctypes.POINTER(ctypes.c_float),
+            ctypes.POINTER(ctypes.c_float),
+            ctypes.c_int,
+        ]
+        self.lib.reluHost.restype = ctypes.c_int
+
+        self.lib.softmaxHost.argtypes = [
+            ctypes.POINTER(ctypes.c_float),
+            ctypes.POINTER(ctypes.c_float),
+            ctypes.c_int,
+            ctypes.c_int,
+        ]
+        self.lib.softmaxHost.restype = ctypes.c_int
+
+        self.lib.softmaxHostAdvanced.argtypes = [
+            ctypes.POINTER(ctypes.c_float),
+            ctypes.POINTER(ctypes.c_float),
+            ctypes.c_int,
+            ctypes.c_int,
+        ]
+        self.lib.softmaxHostAdvanced.restype = ctypes.c_int
+
 
 _cuda = _CudaLib()
 
@@ -129,3 +152,65 @@ def cuda_vector_add_numpy_advanced(a: np.ndarray, b: np.ndarray) -> np.ndarray:
         raise RuntimeError(f"vectorAddHostAdvanced failed, cuda code={code}")
 
     return c_arr
+
+
+def cuda_relu_numpy(x: np.ndarray) -> np.ndarray:
+    if x.ndim != 1:
+        raise ValueError("ReLU input must be a 1D array")
+    if x.size == 0:
+        return np.array([], dtype=np.float32)
+
+    x_arr = np.ascontiguousarray(x, dtype=np.float32)
+    y_arr = np.empty_like(x_arr)
+
+    n = int(x_arr.size)
+    code = _cuda.lib.reluHost(
+        x_arr.ctypes.data_as(ctypes.POINTER(ctypes.c_float)),
+        y_arr.ctypes.data_as(ctypes.POINTER(ctypes.c_float)),
+        n,
+    )
+    if code != 0:
+        raise RuntimeError(f"reluHost failed, cuda code={code}")
+    return y_arr
+
+
+def cuda_softmax_numpy(x: np.ndarray) -> np.ndarray:
+    if x.ndim != 2:
+        raise ValueError("Softmax input must be a 2D array [rows, cols]")
+    rows, cols = x.shape
+    if rows == 0 or cols == 0:
+        return np.empty((rows, cols), dtype=np.float32)
+
+    x_arr = np.ascontiguousarray(x, dtype=np.float32)
+    y_arr = np.empty_like(x_arr)
+
+    code = _cuda.lib.softmaxHost(
+        x_arr.ctypes.data_as(ctypes.POINTER(ctypes.c_float)),
+        y_arr.ctypes.data_as(ctypes.POINTER(ctypes.c_float)),
+        int(rows),
+        int(cols),
+    )
+    if code != 0:
+        raise RuntimeError(f"softmaxHost failed, cuda code={code}")
+    return y_arr
+
+
+def cuda_softmax_numpy_advanced(x: np.ndarray) -> np.ndarray:
+    if x.ndim != 2:
+        raise ValueError("Softmax input must be a 2D array [rows, cols]")
+    rows, cols = x.shape
+    if rows == 0 or cols == 0:
+        return np.empty((rows, cols), dtype=np.float32)
+
+    x_arr = np.ascontiguousarray(x, dtype=np.float32)
+    y_arr = np.empty_like(x_arr)
+
+    code = _cuda.lib.softmaxHostAdvanced(
+        x_arr.ctypes.data_as(ctypes.POINTER(ctypes.c_float)),
+        y_arr.ctypes.data_as(ctypes.POINTER(ctypes.c_float)),
+        int(rows),
+        int(cols),
+    )
+    if code != 0:
+        raise RuntimeError(f"softmaxHostAdvanced failed, cuda code={code}")
+    return y_arr

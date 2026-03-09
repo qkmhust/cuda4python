@@ -2,6 +2,7 @@ setup.py
 mini_cuda_llm/__init__.py
 mini_cuda_llm/api.py
 mini_cuda_llm/benchmark.py
+mini_cuda_llm/benchmark_dl_ops.py
 mini_cuda_llm/validate.py
 mini_cuda_llm.egg-info/PKG-INFO
 mini_cuda_llm.egg-info/SOURCES.txt

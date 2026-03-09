@@ -9,6 +9,7 @@ find_package(CUDAToolkit REQUIRED)
 add_library(mini_cuda_llm_cuda SHARED
     src/vector_add.cu
     src/vector_add_advanced.cu
+    src/dl_ops.cu
 )
 
 target_include_directories(mini_cuda_llm_cuda PUBLIC include)
