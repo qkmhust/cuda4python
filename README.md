@@ -56,7 +56,8 @@ mini-cuda-llm/
 │   ├── api.py
 │   ├── validate.py
 │   ├── benchmark.py
-│   └── benchmark_dl_ops.py
+│   ├── benchmark_dl_ops.py
+│   ├── benchmark_triton.py
 │   └── triton_intro.py
 └── scripts/monitor_gpu.sh
 ```
@@ -136,6 +137,12 @@ print(triton_vector_add_numpy(a, b))
 
 ```bash
 python3 -m mini_cuda_llm.compare_cuda_triton
+```
+
+多规模基准（NumPy/CUDA/Triton）：
+
+```bash
+python3 -m mini_cuda_llm.benchmark_triton --sizes 100000,500000,1000000 --rounds 20 --warmup 5
 ```
 
 ## Triton vs CUDA：对比与优劣
