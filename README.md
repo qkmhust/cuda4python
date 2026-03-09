@@ -24,6 +24,17 @@ flowchart LR
 4. `Softmax basic/advanced`: 数值稳定 + shared memory 归约。
 5. `GEMM basic/advanced/cuBLAS`: 从朴素矩阵乘到工程级实现。
 
+## 推荐阅读顺序（入门必看）
+
+1. 先看接口总览：`include/kernels.h`
+2. 再看基础数据流：`src/vector_add.cu`
+3. 对比 advanced：`src/vector_add_advanced.cu`
+4. 进入 DL 算子：`src/dl_ops.cu`
+5. 进入核心 GEMM：`src/gemm.cu`
+6. 最后看 Python 封装与测试：`python/mini_cuda_llm/api.py`、`python/mini_cuda_llm/perf_pipeline.py`
+
+详细分阶段讲解见：`docs/CODE_READING_GUIDE_CN.md`
+
 ## 目录结构
 
 ```text

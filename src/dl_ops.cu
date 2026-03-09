@@ -5,6 +5,7 @@
 
 #include "kernels.h"
 
+// ReLU：最典型的逐元素激活算子。
 __global__ void reluKernel(const float* x, float* y, int n) {
     int idx = blockIdx.x * blockDim.x + threadIdx.x;
     if (idx < n) {
@@ -13,7 +14,7 @@ __global__ void reluKernel(const float* x, float* y, int n) {
     }
 }
 
-// Basic softmax: one thread processes one row for readability.
+// Softmax 基础版：1 个线程负责 1 行，逻辑直观但并行度较低。
 __global__ void softmaxRowKernelBasic(const float* x, float* y, int rows, int cols) {
     int row = blockIdx.x * blockDim.x + threadIdx.x;
     if (row >= rows) {
@@ -37,7 +38,7 @@ __global__ void softmaxRowKernelBasic(const float* x, float* y, int rows, int co
     }
 }
 
-// Advanced softmax: one block per row with shared-memory reductions.
+// Softmax 进阶版：1 个 block 负责 1 行，使用 shared memory 归约 max/sum。
 __global__ void softmaxRowKernelAdvanced(const float* x, float* y, int cols) {
     int row = blockIdx.x;
     int tid = threadIdx.x;
@@ -83,6 +84,7 @@ __global__ void softmaxRowKernelAdvanced(const float* x, float* y, int cols) {
     }
 }
 
+// Host 包装函数：统一负责显存申请、拷贝、kernel 调度和错误码返回。
 int reluHost(const float* x, float* y, int n) {
     if (x == nullptr || y == nullptr || n <= 0) {
         return static_cast<int>(cudaErrorInvalidValue);

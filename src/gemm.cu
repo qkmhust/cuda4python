@@ -6,6 +6,7 @@
 namespace {
 constexpr int TILE = 16;
 
+// cuBLAS 路径缓存资源：用于减少重复创建 handle/stream 与显存分配。
 float* g_gemm_a = nullptr;
 float* g_gemm_b = nullptr;
 float* g_gemm_c = nullptr;
@@ -15,6 +16,7 @@ size_t g_cap_c = 0;
 cudaStream_t g_gemm_stream = nullptr;
 cublasHandle_t g_cublas = nullptr;
 
+// GEMM 基础版：每线程计算 C 的一个元素，易理解但访存效率一般。
 __global__ void gemmKernelBasic(const float* a, const float* b, float* c, int m, int n, int k) {
     int row = blockIdx.y * blockDim.y + threadIdx.y;
     int col = blockIdx.x * blockDim.x + threadIdx.x;
@@ -29,6 +31,7 @@ __global__ void gemmKernelBasic(const float* a, const float* b, float* c, int m,
     c[row * n + col] = acc;
 }
 
+// GEMM 进阶版：分块加载到 shared memory，减少全局内存访问。
 __global__ void gemmKernelTiled(const float* a, const float* b, float* c, int m, int n, int k) {
     __shared__ float tileA[TILE][TILE];
     __shared__ float tileB[TILE][TILE];
@@ -69,6 +72,7 @@ int gemmImpl(
     int k,
     bool useTiled
 ) {
+    // 教学路径：每次调用独立申请/释放显存，便于理解完整数据流。
     if (a == nullptr || b == nullptr || c == nullptr || m <= 0 || n <= 0 || k <= 0) {
         return static_cast<int>(cudaErrorInvalidValue);
     }
@@ -116,6 +120,7 @@ int gemmImpl(
     return static_cast<int>(err);
 }
 
+// cuBLAS 路径的显存扩容函数：只在需要时增长容量。
 int ensureGemmCapacity(size_t bytesA, size_t bytesB, size_t bytesC) {
     if (bytesA > g_cap_a) {
         if (g_gemm_a) cudaFree(g_gemm_a);
@@ -177,7 +182,7 @@ int gemmHostCublas(const float* a, const float* b, float* c, int m, int n, int k
 
     const float alpha = 1.0f;
     const float beta = 0.0f;
-    // Row-major C = A(MxK) * B(KxN) mapped as column-major C^T = B^T * A^T.
+    // 行主序映射到 cuBLAS 列主序：C^T = B^T * A^T。
     cublasStatus_t st = cublasSgemm(
         g_cublas,
         CUBLAS_OP_N,
@@ -203,6 +208,7 @@ int gemmHostCublas(const float* a, const float* b, float* c, int m, int n, int k
     return static_cast<int>(err);
 }
 
+// 释放 cuBLAS 相关资源，防止长时间实验中的资源泄漏。
 int releaseGemmResources() {
     if (g_gemm_a) cudaFree(g_gemm_a);
     if (g_gemm_b) cudaFree(g_gemm_b);

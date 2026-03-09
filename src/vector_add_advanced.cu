@@ -3,12 +3,14 @@
 #include "kernels.h"
 
 namespace {
+// advanced 路径缓存：复用显存与 stream，减少重复初始化开销。
 float* g_d_a = nullptr;
 float* g_d_b = nullptr;
 float* g_d_c = nullptr;
 int g_capacity = 0;
 cudaStream_t g_stream = nullptr;
 
+// 与基础版同等数学逻辑，差异主要在 host 调度方式。
 __global__ void vectorAddKernelAdvanced(const float* a, const float* b, float* c, int n) {
     int idx = blockIdx.x * blockDim.x + threadIdx.x;
     if (idx < n) {
@@ -16,6 +18,7 @@ __global__ void vectorAddKernelAdvanced(const float* a, const float* b, float* c
     }
 }
 
+// 若输入规模增长则扩容；否则直接复用已有显存。
 int ensureCapacityAdvanced(int n) {
     if (n <= g_capacity) {
         return 0;
@@ -54,6 +57,7 @@ int ensureCapacityAdvanced(int n) {
 }
 }  // namespace
 
+// advanced 主流程：异步拷贝 + stream 内核执行 + 同步收尾。
 int vectorAddHostAdvanced(const float* a, const float* b, float* c, int n) {
     if (a == nullptr || b == nullptr || c == nullptr || n <= 0) {
         return static_cast<int>(cudaErrorInvalidValue);
@@ -99,6 +103,7 @@ int vectorAddHostAdvanced(const float* a, const float* b, float* c, int n) {
     return static_cast<int>(err);
 }
 
+// 显式释放 advanced 缓存资源，适合 benchmark 结束后调用。
 int releaseAdvancedResources() {
     if (g_d_a) cudaFree(g_d_a);
     if (g_d_b) cudaFree(g_d_b);

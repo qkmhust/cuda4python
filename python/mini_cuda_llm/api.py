@@ -12,6 +12,7 @@ _LIB_PATH = os.path.join(_THIS_DIR, _LIB_NAME)
 
 
 class _CudaLib:
+    # 统一管理 ctypes 函数签名，避免每次调用重复设置。
     def __init__(self) -> None:
         if not os.path.exists(_LIB_PATH):
             raise FileNotFoundError(
@@ -101,6 +102,7 @@ _cuda = _CudaLib()
 
 
 def _cleanup() -> None:
+    # 释放 advanced/cublas 路径缓存资源，防止进程退出时遗留。
     _cuda.lib.releaseAdvancedResources()
     _cuda.lib.releaseGemmResources()
 
@@ -139,6 +141,7 @@ def validate_cuda_vector_add(n: int = 1024, expected: float = 3.0, tolerance: fl
 
 
 def cuda_vector_add_numpy(a: np.ndarray, b: np.ndarray) -> np.ndarray:
+    # NumPy 入口：做输入检查 + 连续化，再交给底层 CUDA C API。
     if a.shape != b.shape:
         raise ValueError("Input arrays must have the same shape")
     if a.ndim != 1:
@@ -230,6 +233,7 @@ def cuda_softmax_numpy(x: np.ndarray) -> np.ndarray:
 
 
 def cuda_softmax_numpy_advanced(x: np.ndarray) -> np.ndarray:
+    # advanced softmax 仅替换底层实现，保持与 basic 相同接口。
     if x.ndim != 2:
         raise ValueError("Softmax input must be a 2D array [rows, cols]")
     rows, cols = x.shape
@@ -307,6 +311,7 @@ def cuda_gemm_numpy_advanced(a: np.ndarray, b: np.ndarray) -> np.ndarray:
 
 
 def cuda_gemm_numpy_cublas(a: np.ndarray, b: np.ndarray) -> np.ndarray:
+    # 工程路径：通过 cuBLAS 调用高性能 SGEMM。
     if a.ndim != 2 or b.ndim != 2:
         raise ValueError("GEMM inputs must be 2D arrays")
     if a.shape[1] != b.shape[0]:
